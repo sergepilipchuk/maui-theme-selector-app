@@ -1,120 +1,66 @@
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Drawing.Imaging;
+using CommunityToolkit.Mvvm.ComponentModel;
 using DevExpress.Maui.Core;
 using Microsoft.Maui.ApplicationModel;
 using Microsoft.Maui.Controls;
 using Microsoft.Maui.Graphics;
 
-namespace ThemeViewModel;
+namespace ThemeSelectorApp;
 
-public class ThemesViewModel: NotificationObject {
-    public List<ColorModel> Items { get; set; }
-    public bool IsCustomSource { get; set; }
+public partial class ThemesViewModel : ObservableObject {
+    [ObservableProperty]
+    ObservableCollection<ColorModel> items;
 
-    /*private bool isEnabled = true;
-    public bool IsEnabled {
-        get => isEnabled;
-        set => SetProperty(ref isEnabled, value);
-    }*/
+    [ObservableProperty]
+    ColorModel selectedColor;
 
-    private double red;
-    public double Red {
-        get => red;
-        set => SetProperty(ref red, value, onChanged: (o, n) => UpdatePreviewColor(Red, Green, Blue));
-    }
+    [ObservableProperty]
+    Color previewColor;
 
-    private double green;
-    public double Green {
-        get => green;
-        set => SetProperty(ref green, value, onChanged: (o, n) => UpdatePreviewColor(Red, Green, Blue));
-    }
+    [ObservableProperty]
+    string previewColorName;
 
-    private double blue;
-    public double Blue {
-        get => blue;
-        set => SetProperty(ref blue, value, onChanged: (o, n) => UpdatePreviewColor(Red, Green, Blue));
-    }
+    [ObservableProperty]
+    public List<string> themeTypes = new List<string>() { "System", "Dark", "Light" };
 
-    private Color previewColor;
-    public Color PreviewColor {
-        get => previewColor;
-        set => SetProperty(ref previewColor, value);
-    }
+    [ObservableProperty]
+    public string selectedThemeType;
 
-    /*private string previewColorHex;
-    public string PreviewColorHex {
-        get => previewColorHex;
-        set => SetProperty(ref previewColorHex, value);
-    }*/
+    partial void OnSelectedThemeTypeChanged(string value) {
+        switch (value) {
+            case "Light": {
+                    Application.Current.UserAppTheme = AppTheme.Light;
+                    break;
+                }
+            case "Dark": {
+                    Application.Current.UserAppTheme = AppTheme.Dark;
+                    break;
+                }
+            case "System": {
+                    Application.Current.UserAppTheme = AppTheme.Unspecified;
+                    break;
+                }
 
-    private string previewColorName;
-    public string PreviewColorName {
-        get => previewColorName;
-        set => SetProperty(ref previewColorName, value);
-    }
-
-    private bool isLightTheme;
-    public bool IsLightTheme {
-        get => isLightTheme;
-        set {
-            if (isLightTheme != value && value) {
-                isLightTheme = true;
-                isDarkTheme = false;
-                isSystemTheme = false;
-                OnPropertyChanged(nameof(IsDarkTheme));
-                OnPropertyChanged(nameof(IsSystemTheme));
-                UpdateTheme();
-            } else {
-                OnPropertyChanged(nameof(IsLightTheme));
-            }
         }
     }
 
-    private bool isDarkTheme;
-    public bool IsDarkTheme {
-        get => isDarkTheme;
-        set {
-            if (isDarkTheme != value && value) {
-                isDarkTheme = true;
-                isLightTheme = false;
-                isSystemTheme = false;
-                OnPropertyChanged(nameof(IsLightTheme));
-                OnPropertyChanged(nameof(IsSystemTheme));
-                UpdateTheme();
-            } else {
-                OnPropertyChanged(nameof(IsDarkTheme));
-            }
-        }
-    }
+    partial void OnSelectedColorChanged(ColorModel colorModel) {
+        if (colorModel == null)
+            return;
 
-    private bool isSystemTheme = true;
-    public bool IsSystemTheme {
-        get => isSystemTheme;
-        set {
-            if (isSystemTheme != value && value) {
-                isSystemTheme = true;
-                isDarkTheme = false;
-                isLightTheme = false;
-                OnPropertyChanged(nameof(IsDarkTheme));
-                OnPropertyChanged(nameof(IsLightTheme));
-                UpdateTheme();
-            } else {
-                OnPropertyChanged(nameof(IsSystemTheme));
-            }
+        PreviewColorName = colorModel.DisplayName;
+        if (colorModel.IsSystemColor) {
+            ThemeManager.UseAndroidSystemColor = true;
+            return;
         }
-    }
-
-#if ANDROID
-    private int selectedColorIndex = 1;
-#else
-    private int selectedColorIndex;
-#endif
-    public int SelectedColorIndex {
-        get => selectedColorIndex;
-        set => SetProperty(ref selectedColorIndex, value);
+        ThemeManager.UseAndroidSystemColor = false;
+        ThemeManager.Theme = new Theme(colorModel.Color);
     }
 
     public ThemesViewModel() {
-        Items = new List<ColorModel>() {
+        Items = new ObservableCollection<ColorModel>() {
 #if ANDROID
             new ColorModel(Colors.Black, "System Color", true),
 #endif
@@ -129,36 +75,8 @@ public class ThemesViewModel: NotificationObject {
             new ColorModel(ThemeManager.GetSeedColor(ThemeSeedColor.DeepSeaBlue), ThemeSeedColor.DeepSeaBlue.ToString()),
             new ColorModel(ThemeManager.GetSeedColor(ThemeSeedColor.Blue), ThemeSeedColor.Blue.ToString()),
         };
-    }
-
-    public void ChangeColor(ColorModel colorModel) {
-        if (colorModel == null)
-            return;
-
-        Red = colorModel.Color.Red;
-        Green = colorModel.Color.Green;
-        Blue = colorModel.Color.Blue;
-        PreviewColorName = colorModel.DisplayName;
-        //IsEnabled = !colorModel.IsSystemColor;
-        IsCustomSource = false;
-        if (colorModel.IsSystemColor) {
-            ThemeManager.UseAndroidSystemColor = true;
-            return;
-        }
-
-        ThemeManager.UseAndroidSystemColor = false;
-        ThemeManager.Theme = new Theme(colorModel.Color);
-    }
-
-    private void UpdatePreviewColor(double red, double green, double blue) {
-        PreviewColor = Color.FromRgb(red, green, blue);
-        //PreviewColorHex = PreviewColor.ToHex();
-        IsCustomSource = true;
-    }
-    private void UpdateTheme() {
-        Application.Current.UserAppTheme = IsSystemTheme
-            ? AppTheme.Unspecified
-            : IsLightTheme ? AppTheme.Light : AppTheme.Dark;
+        SelectedColor = Items[0];
+        SelectedThemeType = ThemeTypes[0];
     }
 }
 

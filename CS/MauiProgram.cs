@@ -11,6 +11,7 @@ namespace ThemeSelectorApp {
     public static class MauiProgram {
         public static MauiApp CreateMauiApp() {
             ThemeManager.ApplyThemeToSystemBars = true;
+
             var builder = MauiApp.CreateBuilder();
             builder
                 .UseMauiApp<App>()
