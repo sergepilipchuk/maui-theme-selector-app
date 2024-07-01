@@ -31,18 +31,17 @@ public partial class ThemesViewModel : ObservableObject {
     partial void OnSelectedThemeTypeChanged(string value) {
         switch (value) {
             case "Light": {
-                    Application.Current.UserAppTheme = AppTheme.Light;
-                    break;
-                }
+                Application.Current.UserAppTheme = AppTheme.Light;
+                break;
+            }
             case "Dark": {
-                    Application.Current.UserAppTheme = AppTheme.Dark;
-                    break;
-                }
+                Application.Current.UserAppTheme = AppTheme.Dark;
+                break;
+            }
             case "System": {
-                    Application.Current.UserAppTheme = AppTheme.Unspecified;
-                    break;
-                }
-
+                Application.Current.UserAppTheme = AppTheme.Unspecified;
+                break;
+            }
         }
     }
 
@@ -55,6 +54,7 @@ public partial class ThemesViewModel : ObservableObject {
             ThemeManager.UseAndroidSystemColor = true;
             return;
         }
+        
         ThemeManager.UseAndroidSystemColor = false;
         ThemeManager.Theme = new Theme(colorModel.Color);
     }
