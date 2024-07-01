@@ -45,18 +45,18 @@ public partial class ThemesViewModel : ObservableObject {
         }
     }
 
-    partial void OnSelectedColorChanged(ColorModel colorModel) {
-        if (colorModel == null)
+    partial void OnSelectedColorChanged(ColorModel value) {
+        if (value == null)
             return;
 
-        PreviewColorName = colorModel.DisplayName;
-        if (colorModel.IsSystemColor) {
+        PreviewColorName = value.DisplayName;
+        if (value.IsSystemColor) {
             ThemeManager.UseAndroidSystemColor = true;
             return;
         }
         
         ThemeManager.UseAndroidSystemColor = false;
-        ThemeManager.Theme = new Theme(colorModel.Color);
+        ThemeManager.Theme = new Theme(value.Color);
     }
 
     public ThemesViewModel() {
