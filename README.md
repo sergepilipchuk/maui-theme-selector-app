@@ -2,9 +2,9 @@
 [![](https://img.shields.io/badge/📖_How_to_use_DevExpress_Examples-e9f6fc?style=flat-square)](https://docs.devexpress.com/GeneralInformation/403183)
 <!-- default badges end -->
 
-# Use DevExpress .NET MAUI Components to Build a Theme Selector App
+# Use DevExpress .NET MAUI Components to Build a Selector for Material Design 3 Themes
 
-This example uses DevExpress .NET MAUI Components to build a theme selector app.
+This example uses DevExpress .NET MAUI Components to build a selector for Material Design 3 themes.
 
 <img width="40%" alt="DevExpress Chat for .NET MAUI" src="Images/app-preview.png">
 
@@ -20,15 +20,7 @@ This example uses DevExpress .NET MAUI Components to build a theme selector app.
 
 ## Implementation Details
 
-1. Use the [DXScrollView](https://docs.devexpress.com/MAUI/DevExpress.Maui.Core.DXScrollView) control as the root for the view layout. This way allows you to scroll content in both horizontal and vertical directions.
-
-    ```xaml
-    <dx:DXScrollView> 
-        ... 
-    </dx:DXScrollView>
-    ```
-
-2. Use the [ChoiceChipGroup](https://docs.devexpress.com/MAUI/DevExpress.Maui.Editors.ChoiceChipGroup) control to display and group round color markers that allow you to select a new color. To specify a round color marker, use the [DXBorder](https://docs.devexpress.com/MAUI/DevExpress.Maui.Core.DXBorder) control.
+1. Use the [ChoiceChipGroup](https://docs.devexpress.com/MAUI/DevExpress.Maui.Editors.ChoiceChipGroup) control to display and group round color markers that allow you to select a new color. To specify a round color marker, use the [DXBorder](https://docs.devexpress.com/MAUI/DevExpress.Maui.Core.DXBorder) control.
 
     ```xaml
     <dx:ChoiceChipGroup 
@@ -44,9 +36,46 @@ This example uses DevExpress .NET MAUI Components to build a theme selector app.
             </DataTemplate>
         </dx:ChoiceChipGroup.ChipContentTemplate>
     </dx:ChoiceChipGroup>
-    ```     
+    ```
 
-3. Use the [`DXCollectionView`](https://docs.devexpress.com/MAUI/DevExpress.Maui.CollectionView.DXCollectionView) control to display radio buttons that allow you to select a new theme. Specify the data source and item templates (use different templates for selected and deselected item).
+2. Use the `ThemeManager.GetSeedColor()` method to get a [seed color](https://docs.devexpress.com/MAUI/404636/common-concepts/themes#create-a-theme-based-on-a-custom-seed-color).
+
+    ```csharp
+    public ThemesViewModel() {
+        Items = new ObservableCollection<ColorModel>() {
+    #if ANDROID
+            new ColorModel(Colors.Black, "System Color", true),
+    #endif
+            new ColorModel(ThemeManager.GetSeedColor(ThemeSeedColor.Purple), ThemeSeedColor.Purple.ToString()),
+            // ...
+        };
+        SelectedColor = Items[0];
+        SelectedThemeType = ThemeTypes[0];
+    }
+    ``` 
+
+3. Use the `new Theme()` constructor to create a new theme based on the selected color.
+    ```csharp
+    [ObservableProperty]
+    ColorModel selectedColor;
+
+    partial void OnSelectedColorChanged(ColorModel value) {
+        if (value == null)
+            return;
+
+        PreviewColorName = value.DisplayName;
+        if (value.IsSystemColor) {
+            // Use the color from the Android system
+            ThemeManager.UseAndroidSystemColor = true;
+            return;
+        }
+        
+        ThemeManager.UseAndroidSystemColor = false;
+        // Creates a new theme based on the selected color
+        ThemeManager.Theme = new Theme(value.Color);
+    }    
+
+4. Use the [`DXCollectionView`](https://docs.devexpress.com/MAUI/DevExpress.Maui.CollectionView.DXCollectionView) control to display radio buttons that allow you to select a theme type (*dark/light/system*). Specify the data source and item templates (use different templates for selected and deselected item).
 
     ```xaml
     <dx:DXCollectionView ...
@@ -76,13 +105,26 @@ This example uses DevExpress .NET MAUI Components to build a theme selector app.
     </dx:DXCollectionView>
     ```
 
-4. The [DXButton](https://docs.devexpress.devx/MAUI/DevExpress.Maui.Core.DXButton) control changes its color if you tap a color marker or select a new theme.
+    ```csharp
+    public string selectedThemeType;
 
-    ```xaml
-    <dx:DXButton ...
-        Content="This Button is Themed" 
-        ButtonType="Filled" />
-    ```
+    partial void OnSelectedThemeTypeChanged(string value) {
+        switch (value) {
+            case "Light": {
+                Application.Current.UserAppTheme = AppTheme.Light;
+                break;
+            }
+            case "Dark": {
+                Application.Current.UserAppTheme = AppTheme.Dark;
+                break;
+            }
+            case "System": {
+                Application.Current.UserAppTheme = AppTheme.Unspecified;
+                break;
+            }
+        }
+    }
+    ```  
 
 ## Files to Review
 
