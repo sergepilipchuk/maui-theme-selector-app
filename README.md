@@ -2,7 +2,7 @@
 [![](https://img.shields.io/badge/📖_How_to_use_DevExpress_Examples-e9f6fc?style=flat-square)](https://docs.devexpress.com/GeneralInformation/403183)
 <!-- default badges end -->
 
-# Use DevExpress .NET MAUI Components to Build a Selector for Material Design 3 Themes
+# DevExpress .NET MAUI Controls - Implement a Selector for Material Design 3 Themes
 
 This example uses DevExpress .NET MAUI Components to build a selector for Material Design 3 themes.
 
