@@ -30,7 +30,11 @@ This example uses DevExpress .NET MAUI Components to build a selector for Materi
         ... >
         <dx:ChoiceChipGroup.ChipContentTemplate>
             <DataTemplate>
-                <dx:DXBorder BackgroundColor="{Binding Color}" ... >
+                <dx:DXBorder
+                    CornerRadius="26" 
+                    WidthRequest="52" 
+                    HeightRequest="52"
+                    BackgroundColor="{Binding Color}">
                     <Label Text="{Binding Name}" ... />
                 </dx:DXBorder>
             </DataTemplate>
@@ -55,6 +59,7 @@ This example uses DevExpress .NET MAUI Components to build a selector for Materi
     ``` 
 
 3. Use the `new Theme()` constructor to create a new theme based on the selected color.
+
     ```csharp
     [ObservableProperty]
     ColorModel selectedColor;
