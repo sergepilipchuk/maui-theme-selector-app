@@ -20,7 +20,7 @@ This example uses DevExpress .NET MAUI Components to build a selector for Materi
 
 ## Implementation Details
 
-1. Use the [ChoiceChipGroup](https://docs.devexpress.com/MAUI/DevExpress.Maui.Editors.ChoiceChipGroup) control to display and group round color markers that allow you to select a new color. To specify a round color marker, use the [DXBorder](https://docs.devexpress.com/MAUI/DevExpress.Maui.Core.DXBorder) control.
+1. Use the [ChoiceChipGroup](https://docs.devexpress.com/MAUI/DevExpress.Maui.Editors.ChoiceChipGroup) control to display and group round color markers that allow you to select a new color. To add a round color marker, use the [DXBorder](https://docs.devexpress.com/MAUI/DevExpress.Maui.Core.DXBorder) control.
 
     ```xaml
     <dx:ChoiceChipGroup 
@@ -42,7 +42,7 @@ This example uses DevExpress .NET MAUI Components to build a selector for Materi
     </dx:ChoiceChipGroup>
     ```
 
-2. Use the `ThemeManager.GetSeedColor()` method to get a [seed color](https://docs.devexpress.com/MAUI/404636/common-concepts/themes#create-a-theme-based-on-a-custom-seed-color).
+2. As you see in the previous step, the `ChoiceChipGroup` control obtains data from the view model's `Items` collection. Populate this collection with pre-defined colors. Use the `ThemeManager.GetSeedColor()` method to obtain [seed colors](https://docs.devexpress.com/MAUI/404636/common-concepts/themes#create-a-theme-based-on-a-custom-seed-color).
 
     ```csharp
     public ThemesViewModel() {
@@ -51,6 +51,7 @@ This example uses DevExpress .NET MAUI Components to build a selector for Materi
             new ColorModel(Colors.Black, "System Color", true),
     #endif
             new ColorModel(ThemeManager.GetSeedColor(ThemeSeedColor.Purple), ThemeSeedColor.Purple.ToString()),
+            new ColorModel(ThemeManager.GetSeedColor(ThemeSeedColor.Violet), ThemeSeedColor.Violet.ToString()),
             // ...
         };
         SelectedColor = Items[0];
