@@ -81,7 +81,7 @@ This example uses DevExpress .NET MAUI Components to build a selector for Materi
         ThemeManager.Theme = new Theme(value.Color);
     }    
 
-4. Use the [`DXCollectionView`](https://docs.devexpress.com/MAUI/DevExpress.Maui.CollectionView.DXCollectionView) control to display radio buttons that allow you to select a theme type (*dark/light/system*). Specify the data source and item templates (use different templates for selected and deselected item).
+4. Use the [`DXCollectionView`](https://docs.devexpress.com/MAUI/DevExpress.Maui.CollectionView.DXCollectionView) control to display radio buttons that allow you to select a theme type (*dark/light/system*). Specify the data source and item templates (use different templates for selected and deselected items).
 
     ```xaml
     <dx:DXCollectionView ...
